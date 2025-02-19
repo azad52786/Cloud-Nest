@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,6 +17,8 @@ import { montserrat } from "@/app/(auth)/layout";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { createAccount, signInUser } from "@/lib/user.action";
+import OTPModel from "./OTPModel";
 
 type FormType = "sign-in" | "sign-up";
 
@@ -28,12 +29,13 @@ const authFormSchema = (formType: FormType) => {
       formType === "sign-up"
         ? z.string().min(2).max(50)
         : z.string().optional(),
-    password: z.string().min(8).max(20),
   });
 };
 
 const AuthForm = ({ type }: { type: FormType }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [accountId, setAccountId] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
   const formSchema = authFormSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,9 +46,34 @@ const AuthForm = ({ type }: { type: FormType }) => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+    // why this function call is not come into this line
+    // console.log("Data is successfully submitted");
     console.log(values);
+    setIsLoading(true);
+    setErrorMessage("");
+    try {
+      const user =
+        type === "sign-up"
+          ? await createAccount({
+              name: values.name || "",
+              email: values.email,
+            })
+          : await signInUser({
+              email: values.email || "",
+            });
+
+      setAccountId(user.accountId);
+      console.log(user?.accountId);
+      console.log(accountId);
+
+      if (user?.error) {
+        setErrorMessage(user.error);
+      }
+    } catch {
+      setErrorMessage("Failed to create account. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   }
   return (
     <div className="flex-grow flex items-center justify-center p-3 min-h-[600px] relative">
@@ -61,7 +88,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
           <h1 className={`form-title`}>
             {type === "sign-in" ? "Sign In" : "Sign Up"}
           </h1>
-          <div className=" shadow-lg pt-6 shadow-purple-400 flex flex-col gap-5 p-5  rounded-md ">
+          <div className=" shadow-lg border border-sky-300 pt-6 shadow-purple-400 flex flex-col gap-5 p-5  rounded-md ">
             {type === "sign-up" && (
               <FormField
                 control={form.control}
@@ -121,10 +148,15 @@ const AuthForm = ({ type }: { type: FormType }) => {
                 />
               )}
             </Button>
+            {errorMessage && (
+              <div className="error-message text-rose-500 font-semibold my-[-20px]">
+                {errorMessage}
+              </div>
+            )}
             <div className=" body-2 flex justify-center">
               {type === "sign-in" ? (
                 <div>
-                  Don't have an account?{" "}
+                  Don&apos;t have an account?{" "}
                   <Link href="sign-up" className="font-medium underline">
                     Sign Up
                   </Link>
@@ -141,6 +173,14 @@ const AuthForm = ({ type }: { type: FormType }) => {
           </div>
         </form>
       </Form>
+
+      {accountId && (
+        <OTPModel
+          email={form.getValues("email")}
+          setAccountId={setAccountId}
+          accountId={accountId}
+        />
+      )}
     </div>
   );
 };

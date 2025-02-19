@@ -1,0 +1,121 @@
+"use client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import React, { useState } from "react";
+import { Button } from "./ui/button";
+import Image from "next/image";
+import { montserrat } from "@/app/(auth)/layout";
+import { verifySecret } from "@/lib/user.action";
+import { useRouter } from "next/navigation";
+
+type OTPModelProps = {
+  email: string;
+  accountId: string;
+  setAccountId: React.Dispatch<React.SetStateAction<string | null>>;
+};
+const OTPModel = ({ email, setAccountId, accountId }: OTPModelProps) => {
+  const [isOpen, setIsOpen] = useState(true);
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    // Verification and login is pending only
+    e.preventDefault();
+    setIsLoading(true);
+    const { sessionId } = await verifySecret({ accountId, password });
+    console.log(`Verified ${sessionId}`);
+    if (sessionId) router.push("/");
+    setIsLoading(false);
+  };
+  return (
+    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+      <AlertDialogContent
+        className={`shad-alert-dialog ${montserrat.className}`}
+      >
+        <AlertDialogHeader className="relative flex justify-center">
+          <AlertDialogTitle className="h2 text-sky-500 text-center">
+            Enter Your OTP
+            <Image
+              src="/assets/icons/close-dark.svg"
+              alt="close"
+              width={20}
+              height={20}
+              onClick={() => {
+                setIsOpen(false);
+                setAccountId(null);
+              }}
+              className="otp-close-button"
+            />
+          </AlertDialogTitle>
+          <AlertDialogDescription className="subtitle-2 text-center text-light-100">
+            We&apos;ve sent a code to{" "}
+            <span className="pl-1 text-violet-600 text-brand">{email}</span>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+
+        <InputOTP maxLength={6} value={password} onChange={setPassword}>
+          <InputOTPGroup className="shad-otp">
+            <InputOTPSlot
+              index={0}
+              className="shad-otp-slot outline-none focus:ring-2 focus:ring-sky-300 "
+            />
+            <InputOTPSlot index={1} className="shad-otp-slot" />
+            <InputOTPSlot index={2} className="shad-otp-slot" />
+            <InputOTPSlot index={3} className="shad-otp-slot" />
+            <InputOTPSlot index={4} className="shad-otp-slot" />
+            <InputOTPSlot index={5} className="shad-otp-slot" />
+          </InputOTPGroup>
+        </InputOTP>
+
+        <AlertDialogFooter>
+          <div className="flex w-full flex-col gap-4">
+            <AlertDialogAction
+              onClick={handleSubmit}
+              className=" h-12"
+              type="button"
+            >
+              Submit
+              {isLoading && (
+                <Image
+                  src="/assets/icons/loader.svg"
+                  alt="loader"
+                  width={24}
+                  height={24}
+                  className="ml-2 animate-spin"
+                />
+              )}
+            </AlertDialogAction>
+
+            <div className="subtitle-2 mt-2 text-center text-light-100">
+              Didn&apos;t get a code?
+              <Button
+                type="button"
+                variant="link"
+                className="pl-1 text-brand underline text-pink-700"
+                // onClick={handleResendOtp}
+              >
+                Click to resend
+              </Button>
+            </div>
+          </div>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    // <></>
+  );
+};
+
+export default OTPModel;
