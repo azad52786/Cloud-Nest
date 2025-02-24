@@ -14,10 +14,21 @@ import { Separator } from "./ui/separator";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { signOutUser } from "@/lib/user.action";
+import FileUploader from "./FileUploader";
+import { userInformation } from "@/types";
 
-const MobileNavbar = () => {
+const MobileNavbar = ({ userDetails }: { userDetails: userInformation }) => {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  console.log(userDetails);
+  const signOutHandeler = async () => {
+    try {
+      await signOutUser();
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
     <header
       className={`flex h-16 text-slate-300 justify-between items-center sm:hidden px-5 ${montserrat.className}`}
@@ -51,9 +62,9 @@ const MobileNavbar = () => {
               />
               <div className="sm:hidden lg:block">
                 <p className=" font-semibold text-sm text-slate-200 capitalize">
-                  Kaji Azad Ali
+                  {userDetails?.name}
                 </p>
-                <p className=" text-sm font-medium">contact@gamil.com</p>
+                <p className=" text-sm font-medium">{userDetails?.email}</p>
               </div>
             </div>
             <Separator className="mb-4 bg-opacity-0" />
@@ -68,9 +79,9 @@ const MobileNavbar = () => {
                       className={cn(
                         "flex gap-5  text-white  lg:w-full items-center grow-[1] justify-start px-[30px] h-[54px] rounded-full ",
                         pathname === url &&
-                          "bg-sky-500  shadow-blue-400 shadow-lg",
+                          "bg-indigo-500  shadow-indigo-500 shadow-md",
                         pathname !== url &&
-                          "hover:shadow-md hover:shadow-sky-400"
+                          "hover:shadow-sm hover:shadow-indigo-400"
                       )}
                     >
                       <Image
@@ -95,22 +106,27 @@ const MobileNavbar = () => {
 
           <div className="flex flex-col justify-between gap-5 pb-5">
             {/* <FileUploader ownerId={ownerId} accountId={accountId} /> */}
-            <Button
-              type="submit"
-              className={
-                "flex gap-2  text-white lg:w-full items-center grow-[1] justify-center px-[30px] h-[54px] rounded-full bg-sky-500 hover:shadow-purple-400 hover:bg-purple-400 transition-all duration-150 hover:text-black  shadow-blue-500 shadow-lg"
-              }
-              //   onClick={async () => await signOutUser()}
-            >
-              <Image
-                src="/assets/icons/logout.svg"
-                alt="logo"
-                width={24}
-                height={24}
-                className="invert w-8 h-8"
-              />
-              <p className=" font-bold text-xl">Logout</p>
-            </Button>
+            <FileUploader
+              accountId={userDetails?.accountId}
+              ownerId={userDetails?.$id}
+            />
+            <form action={signOutHandeler}>
+              <Button
+                type="submit"
+                className={
+                  "flex gap-2  text-black  w-full items-center grow-[1] justify-center px-[30px] h-[54px] rounded-full bg-sky-500 hover:shadow-indigo-500 hover:bg-indigo-500 transition-all duration-150 hover:text-black  shadow-blue-500 shadow-sm"
+                }
+              >
+                <Image
+                  src="/assets/icons/logout.svg"
+                  alt="logo"
+                  width={24}
+                  height={24}
+                  className="invert w-8 h-8"
+                />
+                <p className=" font-bold text-xl">Logout</p>
+              </Button>
+            </form>
           </div>
         </SheetContent>
       </Sheet>

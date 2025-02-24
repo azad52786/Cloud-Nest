@@ -2,16 +2,17 @@
 import { montserrat } from "@/app/(auth)/layout";
 import { avatarPlaceholderUrl, navItems } from "@/constants";
 import { cn } from "@/lib/utils";
+import { userInformation } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-const Sidebar = () => {
+const Sidebar = ({ userDetails }: { userDetails: userInformation }) => {
   const pathname = usePathname();
   return (
     <aside
-      className={`${montserrat.className} remove-scrollbar hidden h-screen w-[90px] flex-col gap-5 overflow-auto px-5 py-7 sm:flex lg:w-[280px] xl:w-[325px] bg-slate-700`}
+      className={`${montserrat.className} remove-scrollbar hidden h-screen w-[90px] flex-col gap-5 overflow-auto px-5 py-7 sm:flex lg:w-[280px] xl:w-[325px] bg-slate-800`}
     >
       <Image
         src="/assets/icons/logo-full-brand.svg"
@@ -41,8 +42,9 @@ const Sidebar = () => {
                   className={cn(
                     "flex gap-5 rounded-xl lg:w-full justify-center lg:justify-start items-center lg:px-[30px] h-[54px] lg:rounded-full ",
                     pathname === url &&
-                      "bg-sky-500 text-white shadow-blue-500 shadow-lg",
-                    pathname !== url && "hover:shadow-md hover:shadow-sky-400"
+                      "bg-indigo-500 text-white shadow-indigo-500 shadow-md",
+                    pathname !== url &&
+                      "hover:shadow-sm hover:shadow-indigo-400"
                   )}
                 >
                   <Image
@@ -81,10 +83,10 @@ const Sidebar = () => {
         />
         <div className="hidden lg:block">
           <p className="text-[16px] leading-[20px] font-semibold capitalize">
-            Kaji Azad Ali
+            {userDetails?.name}
           </p>
           <p className="text-[14px] leading-[16px] font-normal">
-            Contact@gamil.com
+            {userDetails?.email}
           </p>
         </div>
       </div>
