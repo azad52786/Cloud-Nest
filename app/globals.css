@@ -72,7 +72,7 @@
     @apply mx-auto max-w-7xl px-5;
   }
   .primary-btn {
-    @apply  hover: transition-all rounded-full button !important;
+    @apply   transition-all rounded-full button !important;
   }
   .flex-center {
     @apply flex items-center justify-center;
@@ -99,7 +99,7 @@
     @apply space-y-2 sm:space-y-4 max-w-[95%] sm:w-fit rounded-xl md:rounded-[30px] px-4 md:px-8 py-10 bg-white outline-none !important;
   }
   .shad-submit-btn {
-    @apply  button hover: transition-all rounded-full !important;
+    @apply  button transition-all rounded-full !important;
   }
   .shad-otp {
     @apply w-full flex gap-1 sm:gap-2 justify-between !important;
@@ -302,7 +302,7 @@
     @apply flex-center min-w-fit gap-4 !important;
   }
   .sign-out-button {
-    @apply flex-center h-[52px] min-w-[54px] items-center rounded-full  p-0  shadow-none transition-all hover: !important;
+    @apply flex-center h-[52px] min-w-[54px] items-center rounded-full  p-0  shadow-none transition-all !important;
   }
 
   /* Mobile Navigation */

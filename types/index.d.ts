@@ -12,3 +12,10 @@ export declare interface uploadFileProps {
   accountId: string;
   path: string;
 }
+
+
+export declare interface ActionType {
+  label: string;
+  icon: string;
+  value: string;
+}
