@@ -87,7 +87,7 @@
   }
 
   .shad-form-item {
-    @apply flex h-[78px] flex-col justify-center rounded-xl border border-light-300 px-4 shadow-drop-1;
+    @apply flex h-[78px] flex-col justify-center rounded-xl border border-light-300 px-4 ;
   }
   .shad-form-label {
     @apply  pt-2 body-2 w-full !important;
@@ -102,7 +102,7 @@
     @apply  button transition-all rounded-full !important;
   }
   .shad-otp {
-    @apply w-full flex gap-1 sm:gap-2 justify-between !important;
+    @apply w-full flex gap-1 sm:gap-2 justify-around sm:justify-between !important;
   }
   .shad-otp-slot {
     @apply text-[25px] sm:text-[40px] font-medium rounded-xl justify-center  flex border-2 sm:size-12 size-9 md:size-16 gap-5 text-sky-500 !important;
@@ -191,13 +191,13 @@
 
   /* ActionsDropdown */
   .rename-input-field {
-    @apply body-2 shad-no-focus h-[52px] w-full rounded-full border px-4 shadow-drop-1 !important;
+    @apply body-2 shad-no-focus h-[52px] w-full rounded-full border px-4  !important;
   }
   .delete-confirmation {
-    @apply text-center  !important;
+    @apply text-center text-sky-300 text-base  !important;
   }
   .delete-file-name {
-    @apply font-medium  !important;
+    @apply font-medium text-rose-600 !important;
   }
   .modal-cancel-button {
     @apply h-[52px] flex-1 rounded-full bg-white  hover:bg-transparent !important;
@@ -208,7 +208,7 @@
 
   /* ActionsModalContent */
   .file-details-thumbnail {
-    @apply !mb-1 flex items-center gap-3 rounded-xl border border-light-200/40 bg-light-400/50 p-3 !important;
+    @apply !mb-1 flex items-center gap-3 rounded-xl border  bg-light-400/50 p-3 !important;
   }
   .file-details-label {
     @apply body-2 w-[30%]  !important;
@@ -221,7 +221,7 @@
     @apply !mt-2 space-y-2 !important;
   }
   .share-input-field {
-    @apply body-2 shad-no-focus h-[52px] w-full rounded-full border px-4 shadow-drop-1 !important;
+    @apply body-2 shad-no-focus !text-lg h-[52px] w-full rounded-full border px-4  !important;
   }
   .share-remove-user {
     @apply rounded-full bg-transparent  shadow-none hover:bg-transparent !important;
@@ -278,7 +278,7 @@
 
   /* FileUploader */
   .uploader-button {
-    @apply primary-btn h-[52px] gap-2 px-10 shadow-drop-1 !important;
+    @apply primary-btn h-[52px] gap-2 px-10  !important;
   }
   .uploader-preview-list {
     @apply fixed bottom-10 right-10 z-50 flex size-full h-fit max-w-[480px] flex-col gap-3 rounded-[20px] bg-white p-7 shadow-drop-3 !important;

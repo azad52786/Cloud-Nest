@@ -20,11 +20,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import { ActionType } from "@/types";
-import { actionsDropdownItems } from "@/lib/utils";
+import { actionsDropdownItems, cn } from "@/lib/utils";
 import Link from "next/link";
 import { constructDownloadUrl } from "@/constants";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { deleteFile, renameFile, updateUsersAccess } from "@/lib/file.action";
+import { usePathname } from "next/navigation";
+import FileDetailsComponent from "./FileDetailsComponent";
+import ShareFile from "./ShareFile";
 
 const ActionDropdown = ({ file }: { file: Models.Document }) => {
 	const [isOpenModal, setIsOpenModal] = useState(false);
@@ -32,23 +36,62 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
 	const [action, setAction] = useState<ActionType | null>(null);
 	const [name, setName] = useState(file.name);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-
+	const [emails, setEmails] = useState<string[]>([]);
+	const path = usePathname();
 	const handelAllCloseModal = () => {
 		setIsDropDownOpen(false);
 		setIsDropDownOpen(false);
 		setAction(null);
 		setName(file.name);
+		setEmails([]);
+	};
+	console.log(file.bucketFileId);
+
+	const handleRemoveEmailAccess = (email: string) => {
+		const updatedEmailAccess = file.users.filter((e: string) => e !== email);
+
+		updateUsersAccess({
+			fileId: file.$id,
+			emails: updatedEmailAccess,
+			path,
+		});
 	};
 
-	const handleAction = () => {};
+	const handleAction = async () => {
+		if (!action) return;
+		setIsLoading(true);
+
+		const actions = {
+			rename: () =>
+				renameFile({ fileId: file.$id, name, extension: file.extension, path }),
+			share: () =>
+				updateUsersAccess({
+					fileId: file.$id,
+					emails: [...emails, ...file.users],
+					path,
+				}),
+			delete: () =>
+				deleteFile({ fileId: file.$id, bucketId: file.bucketFileId, path }),
+		};
+
+		let isSuccess = false;
+
+		isSuccess = await actions[action.value as keyof typeof actions]();
+
+		if (isSuccess) {
+			handelAllCloseModal();
+		}
+
+		setIsLoading(false);
+	};
 
 	const renderModal = () => {
 		if (!action) return null;
 		const { label, value } = action;
 
 		return (
-			<DialogContent className="rounded-[26px] w-[90%] max-w-[400px] px-6 py-8 button border border-sky-300 bg-slate-950  text-slate-100">
-				<DialogHeader className="flex flex-col gap-3">
+			<DialogContent className="rounded-[26px] w-[95%] max-w-[500px] sm:px-6 px-1 py-8  button border border-sky-300 bg-slate-950  text-slate-100">
+				<DialogHeader className="flex w-full overflow-hidden flex-col gap-3">
 					<DialogTitle className="text-center text-indigo-500">
 						{label}
 					</DialogTitle>
@@ -57,8 +100,22 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
 							type="text"
 							value={name}
 							onChange={(e) => setName(e.target.value)}
-							className=" border-r border-b-2 border-r-purple-400 border-b-purple-400 !outline-none bg-slate-800"
+							className=" border-r border-b-2 border-r-purple-400 h-10 !text-lg border-b-purple-400 !outline-none bg-slate-800"
 						/>
+					)}
+					{value === "details" && <FileDetailsComponent file={file} />}
+					{value === "share" && (
+						<ShareFile
+							file={file}
+							onInputChange={setEmails}
+							onRemoveEmailAccess={handleRemoveEmailAccess}
+						/>
+					)}
+					{value === "delete" && (
+						<p className="delete-confirmation">
+							Are you sure you want to delete{` `}
+							<span className="delete-file-name">{file.name}</span>?
+						</p>
 					)}
 				</DialogHeader>
 				{["rename", "delete", "share"].includes(value) && (
@@ -71,7 +128,10 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
 						</Button>
 						<Button
 							onClick={handleAction}
-							className=" rounded-full bg-green-400 text-gray-900 !mx-0 h-[52px] w-full flex-1 hover:bg-green-500"
+							className={cn(
+								" rounded-full bg-green-400 text-gray-900 !mx-0 h-[52px] w-full flex-1 hover:bg-green-500",
+								action.value === "delete" && "bg-rose-600 hover:bg-rose-700"
+							)}
 						>
 							<p className="capitalize">{value}</p>
 							{isLoading && (

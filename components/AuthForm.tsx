@@ -46,9 +46,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
 	});
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		// why this function call is not come into this line
-		// console.log("Data is successfully submitted");
-		console.log(values);
+
 		setIsLoading(true);
 		setErrorMessage("");
 		try {

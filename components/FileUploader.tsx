@@ -48,7 +48,6 @@ const FileUploader = ({
 
         return uploadFile({ ownerId, accountId, file, path }).then(
           (uploadedFile) => {
-            console.log(uploadedFile);
             if (uploadedFile) {
               setFiles((pre) =>
                 pre.filter((f) => f.name !== uploadedFile.name)

@@ -21,7 +21,6 @@ import { userInformation } from "@/types";
 const MobileNavbar = ({ userDetails }: { userDetails: userInformation }) => {
 	const [open, setOpen] = useState(false);
 	const pathname = usePathname();
-	console.log(userDetails);
 	const signOutHandeler = async () => {
 		try {
 			await signOutUser();

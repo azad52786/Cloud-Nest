@@ -36,7 +36,6 @@ const OTPModel = ({ email, setAccountId, accountId }: OTPModelProps) => {
     e.preventDefault();
     setIsLoading(true);
     const { sessionId } = await verifySecret({ accountId, password });
-    console.log(`Verified ${sessionId}`);
     if (sessionId) router.push("/");
     setIsLoading(false);
   };

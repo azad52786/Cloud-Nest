@@ -63,6 +63,22 @@ export const createAccount = async ({ name , email } : {
 }
 
 
+export const signInUser = async ({ email } : { email: string} ) => {
+    const existingUser = await getUserByEmail(email);
+    
+    if(!existingUser) {
+        return parseStringify({
+            accountId : null , 
+            error : "Invalid User"
+        })
+    }
+    
+    const accountId = await sendEmailOtp(email);
+    
+    return parseStringify({accountId});
+}
+
+
 
 export const verifySecret = async ({ accountId , password} : {
     accountId: string,
@@ -85,22 +101,6 @@ export const verifySecret = async ({ accountId , password} : {
         console.error(err);
         throw new Error("Failed to verify secret");
     }
-}
-
-
-export const signInUser = async ({ email } : { email: string} ) => {
-    const existingUser = await getUserByEmail(email);
-    
-    if(!existingUser) {
-        return parseStringify({
-            accountId : null , 
-            error : "Invalid User"
-        })
-    }
-    
-    const accountId = await sendEmailOtp(email);
-    
-    return parseStringify({accountId});
 }
 
 

@@ -6,7 +6,6 @@ import { montserrat } from "../(auth)/layout";
 
 const layout = async ({ children }: { children: React.ReactNode }) => {
 	const currentUser = await getCurrentLoginUser();
-	console.log(currentUser);
 
 	return (
 		<main
