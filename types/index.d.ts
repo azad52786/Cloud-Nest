@@ -1,3 +1,4 @@
+import { FileType } from "@/lib/utils";
 import { Models } from "node-appwrite";
 import React from "react";
 
@@ -51,3 +52,29 @@ export declare interface ShareFileProps {
   onInputChange: React.Dispatch<React.SetStateAction<string[]>>;
 	onRemoveEmailAccess: (email: string) => void;
 }
+
+
+
+export declare interface GetFileProps {
+  types : FileType[];
+  query? : string ;
+  sort? : string;
+  limit? : number;
+}
+
+
+
+  export interface SizeLatest {
+      size : number;
+      latestDate : string;
+    }
+    export interface UsageDetails {
+        image : SizeLatest;
+        document : SizeLatest;
+        video : SizeLatest;
+        audio : SizeLatest;
+        other : SizeLatest;
+        used : number;
+        totalSize : number;
+        
+    }

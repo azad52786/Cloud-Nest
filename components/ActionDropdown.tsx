@@ -42,7 +42,6 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
 		setIsDropDownOpen(false);
 		setIsDropDownOpen(false);
 		setAction(null);
-		setName(file.name);
 		setEmails([]);
 	};
 	console.log(file.bucketFileId);
@@ -150,7 +149,13 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
 		);
 	};
 	return (
-		<Dialog open={isOpenModal} onOpenChange={setIsOpenModal}>
+		<Dialog
+			open={isOpenModal}
+			onOpenChange={() => {
+				setName(file.name);
+				setIsOpenModal(!isOpenModal);
+			}}
+		>
 			<DropdownMenu open={isDropDownOpen} onOpenChange={setIsDropDownOpen}>
 				<DropdownMenuTrigger className=" shad-no-focus ">
 					<Image
@@ -179,7 +184,7 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
 										setIsOpenModal(true);
 									}
 								}}
-								className="flex capitalize text-lg font-bold hover:bg-slate-700 cursor-pointer"
+								className="flex capitalize text-lg font-bold focus:bg-slate-600 cursor-pointer"
 							>
 								{action.value === "download" ? (
 									<Link

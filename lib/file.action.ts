@@ -1,10 +1,10 @@
 "use server";
 
-import { DeleteFileProps, RenameFileProps, UpdateUsersProps, uploadFileProps } from "@/types";
-import { createAdminClient } from "./appwrite";
+import { DeleteFileProps, GetFileProps, RenameFileProps, UpdateUsersProps, uploadFileProps } from "@/types";
+import { createAdminClient, createSessionClient } from "./appwrite";
 import { InputFile } from "node-appwrite/file";
 import { appwriteConfig } from "./appwrite/config";
-import { getFileTypeAndExtension, parseStringify } from "./utils";
+import { FileType, getFileTypeAndExtension, parseStringify } from "./utils";
 import { constructFileUrl } from "@/constants";
 import { revalidatePath } from "next/cache";
 import { ID, Models, Query } from "node-appwrite";
@@ -64,18 +64,31 @@ export const uploadFile = async ({
   }
 };
 
-const getQuery = (currentUser: Models.Document) => {
+const getQuery = (currentUser: Models.Document , types : FileType[] , searchText : string , sort : string , limit? : number) => {
   const query = [
     Query.or([
       Query.equal("owner", [currentUser?.$id]),
       Query.contains("users", [currentUser?.email]),
     ]),
   ];
+  
+  
+  if(types.length > 0) query.push(Query.equal("type", types));
+  if(searchText) query.push(Query.contains("name", searchText));
+  if(limit) query.push(Query.limit(limit));
+  
+  if(sort){
+    const [ sortBy , orderBy ] = sort.split("-");
+    
+    query.push(
+      orderBy === 'asc' ? Query.orderAsc(sortBy) : Query.orderDesc(sortBy)
+    );
+  }
 
   return query;
 };
 
-export const getFiles = async () => {
+export const getFiles = async ({types , query="" , sort="$createdAt-desc" , limit } : GetFileProps) => {
   try {
     const currentUser = await getCurrentLoginUser();
 
@@ -83,7 +96,7 @@ export const getFiles = async () => {
 
     const { databases } = await createAdminClient();
 
-    const queries = getQuery(currentUser);
+    const queries = getQuery(currentUser , types , query , sort , limit);
 
     const files = await databases.listDocuments(
       appwriteConfig.databaseId,
@@ -146,3 +159,38 @@ export const deleteFile =  async ({fileId , bucketId , path } : DeleteFileProps)
     handelError(error , "failed to update users array"); 
   }
 }
+
+
+export const getTotalUsage = async () => {
+  try{
+    const currentUser = await getCurrentLoginUser();
+    if(!currentUser) {
+      throw new Error("Invalid Cradentials");
+    }
+    const { databases } = await createSessionClient();
+    const files = await databases.listDocuments(appwriteConfig.databaseId , appwriteConfig.filesCollectionId , [Query.equal("owner" , [currentUser.$id])]);
+    const filesDetails = {
+      image: { size: 0, latestDate: "" },
+      document: { size: 0, latestDate: "" },
+      video: { size: 0, latestDate: "" },
+      audio: { size: 0, latestDate: "" },
+      other: { size: 0, latestDate: "" },
+      used : 0 , 
+      totalSize : 2 * 1024 * 1024 * 1024
+    }
+  
+    
+    files.documents.forEach((file : Models.Document) => {
+      filesDetails[file.type as FileType].size += file.size;
+      filesDetails.used += file.size;
+      
+      if(!filesDetails[file.type as FileType].latestDate || new Date(filesDetails[file.type as FileType].latestDate) < new Date(file.$updatedAt)){
+          filesDetails[file.type as FileType].latestDate = file.$updatedAt;
+      }
+    })
+    return parseStringify(filesDetails);
+  }catch(error){
+    handelError(error , "failed to get total usage");
+  }
+}
+
