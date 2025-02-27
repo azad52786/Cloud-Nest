@@ -33,11 +33,11 @@ const MobileNavbar = ({ userDetails }: { userDetails: userInformation }) => {
 			className={`flex h-16 text-slate-300 justify-between items-center sm:hidden px-5 ${montserrat.className}`}
 		>
 			<Image
-				src="/assets/icons/logo-full-brand.svg"
+				src="/assets/images/logo-full.png"
 				alt="logo"
 				width={120}
 				height={52}
-				className="h-auto"
+				className="h-[70px] w-[200px] mt-[5px]"
 			/>
 
 			<Sheet open={open} onOpenChange={setOpen}>
@@ -47,6 +47,7 @@ const MobileNavbar = ({ userDetails }: { userDetails: userInformation }) => {
 						alt="mobileNavbar"
 						width={30}
 						height={30}
+						className=" invert"
 					/>
 				</SheetTrigger>
 				<SheetContent className=" flex flex-col gap-2  bg-slate-800">

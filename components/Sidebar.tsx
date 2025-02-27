@@ -15,19 +15,19 @@ const Sidebar = ({ userDetails }: { userDetails: userInformation }) => {
 			className={`${montserrat.className} remove-scrollbar hidden h-screen sm:w-[90px] flex-col gap-5 overflow-auto px-5 py-7 sm:flex lg:w-[280px] xl:w-[325px] bg-slate-800`}
 		>
 			<Image
-				src="/assets/icons/logo-full-brand.svg"
+				src="/assets/images/logo-full.png"
 				alt="logo"
 				width={160}
 				height={50}
-				className=" h-auto hidden lg:block"
+				className=" h-[70px] w-[200px] hidden lg:block"
 			/>
 
 			<Image
-				src="/assets/icons/logo-brand.svg"
+				src="/assets/images/only-logo.png"
 				alt="logo"
 				width={52}
 				height={52}
-				className="lg:hidden"
+				className=" h-auto lg:hidden"
 			/>
 
 			<nav
