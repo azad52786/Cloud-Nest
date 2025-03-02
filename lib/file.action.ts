@@ -175,7 +175,7 @@ export const getTotalUsage = async () => {
       video: { size: 0, latestDate: "" },
       audio: { size: 0, latestDate: "" },
       other: { size: 0, latestDate: "" },
-      used : 0 , 
+      used : 0 ,
       totalSize : 2 * 1024 * 1024 * 1024
     }
   

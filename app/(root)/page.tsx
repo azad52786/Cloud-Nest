@@ -1,31 +1,31 @@
 import ActionDropdown from "@/components/ActionDropdown";
+import ChartComponent from "@/components/ChartComponent";
 import FormattedDateTime from "@/components/FormattedDateTime";
 import PreviewImage from "@/components/PreviewImage";
 import { Separator } from "@/components/ui/separator";
 import { getFiles, getTotalUsage } from "@/lib/file.action";
 import { convertFileSize, getUsesSummary } from "@/lib/utils";
+import { UsageDetails } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import { Models } from "node-appwrite";
 
 export default async function Home() {
-	const [files, totalUsage] = await Promise.all([
-		getFiles({ types: [], limit: 7 }),
-		getTotalUsage(),
-	]);
+	const [files, totalUsage]: Array<UsageDetails | Array<Models.Document>> =
+		await Promise.all([getFiles({ types: [], limit: 7 }), getTotalUsage()]);
 
-	const usageSummary = getUsesSummary(totalUsage);
+	const usageSummary = getUsesSummary(totalUsage as UsageDetails);
 	return (
 		<div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 md:grid-cols-2 xl:gap-10 px-3">
 			<section>
-				{/* <Chart used={totalSpace.used} /> */}
+				<ChartComponent totalUsed={totalUsage as UsageDetails} />
 
-				<ul className=" mt-6 grid grid-cols-1 gap-4 xl:mt-10 xl:grid-cols-2 xl:gap-9 ">
+				<ul className=" mt-2 grid grid-cols-1 gap-4 xl:mt-10 xl:grid-cols-2 xl:gap-9 ">
 					{usageSummary.map((summary) => (
 						<Link
 							href={summary.url}
 							key={summary.title}
-							className=" relative mt-6 rounded-[20px] rounded-t-3xl bg-slate-800 text-gray-300 p-5 transition-all hover:scale-105 "
+							className=" relative mt-1 rounded-[20px] rounded-t-3xl bg-slate-800 text-gray-300 p-5 transition-all hover:scale-105 "
 						>
 							<div className="space-y-4">
 								<div className="flex justify-between gap-3">

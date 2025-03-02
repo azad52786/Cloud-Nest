@@ -44,7 +44,6 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
 		setAction(null);
 		setEmails([]);
 	};
-	console.log(file.bucketFileId);
 
 	const handleRemoveEmailAccess = (email: string) => {
 		const updatedEmailAccess = file.users.filter((e: string) => e !== email);
