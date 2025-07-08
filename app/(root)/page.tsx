@@ -11,7 +11,7 @@ import Link from "next/link";
 import { Models } from "node-appwrite";
 
 export default async function Home() {
-	const [files, totalUsage]: Array<UsageDetails | Array<Models.Document>> =
+	const [files, totalUsage]: [Array<Models.Document>, UsageDetails] =
 		await Promise.all([getFiles({ types: [], limit: 7 }), getTotalUsage()]);
 
 	const usageSummary = getUsesSummary(totalUsage as UsageDetails);
@@ -57,9 +57,9 @@ export default async function Home() {
 
 			<section className=" h-full rounded-[20px] bg-slate-800 text-gray-300 mt-2 p-5 xl:p-8">
 				<h2 className="h3 xl:h2 text-indigo-500">Recent files uploaded</h2>
-				{files.documents.length > 0 ? (
+				{files.length > 0 ? (
 					<ul className="mt-5 flex flex-col gap-5">
-						{files.documents.map((file: Models.Document) => (
+						{files.map((file: Models.Document) => (
 							<Link
 								href={file.url}
 								target="_blank"
